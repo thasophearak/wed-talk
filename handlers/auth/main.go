@@ -3,11 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/favicon"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+
+	"github.com/thasophearak/wed-talk/internal"
 )
 
 var (
@@ -26,9 +29,13 @@ func main() {
 	app.Use(favicon.New())
 	app.Use(logger.New())
 
+	app.Get("/healthz", internal.Health)
+
 	app.Get("/auth", func(c *fiber.Ctx) error {
 		return c.SendString(fmt.Sprintf("👋 Hey, there! `auth` via %v", port))
 	})
 
-	app.Listen(port)
+	if err := app.Listen(port); err != nil {
+		log.Println(err)
+	}
 }

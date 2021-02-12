@@ -1,0 +1,169 @@
+{
+    "apps": {
+        "http": {
+            "servers": {
+                "example": {
+                    "listen": [
+                        ":443"
+                    ],
+                    "routes": [
+                        {
+                            "match": [
+                                {
+                                    "host": [
+                                        "example.com"
+                                    ]
+                                }
+                            ],
+                            "handle": [
+                                {
+                                    "handler": "subroute",
+                                    "routes": [
+                                        {
+                                            "handle": [
+                                                {
+                                                    "encodings": {
+                                                        "gzip": {},
+                                                        "zstd": {}
+                                                    },
+                                                    "handler": "encode"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "subroute",
+                                                    "routes": [
+                                                        {
+                                                            "handle": [
+                                                                {
+                                                                    "handler": "reverse_proxy",
+                                                                    "health_checks": {
+                                                                        "active": {
+                                                                            "expect_body": "alive",
+                                                                            "path": "/healthz"
+                                                                        }
+                                                                    },
+                                                                    "upstreams": [
+                                                                        {
+                                                                            "dial": "localhost:3030"
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "match": [
+                                                {
+                                                    "path": [
+                                                        "/circle*"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "subroute",
+                                                    "routes": [
+                                                        {
+                                                            "handle": [
+                                                                {
+                                                                    "handler": "reverse_proxy",
+                                                                    "health_checks": {
+                                                                        "active": {
+                                                                            "expect_body": "alive",
+                                                                            "path": "/healthz"
+                                                                        }
+                                                                    },
+                                                                    "upstreams": [
+                                                                        {
+                                                                            "dial": "localhost:3020"
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "match": [
+                                                {
+                                                    "path": [
+                                                        "/auth*"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "subroute",
+                                                    "routes": [
+                                                        {
+                                                            "handle": [
+                                                                {
+                                                                    "handler": "reverse_proxy",
+                                                                    "health_checks": {
+                                                                        "active": {
+                                                                            "expect_body": "alive",
+                                                                            "path": "/healthz"
+                                                                        }
+                                                                    },
+                                                                    "upstreams": [
+                                                                        {
+                                                                            "dial": "localhost:3010"
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "terminal": true
+                        }
+                    ],
+					"tls_connection_policies": [
+						{
+							"match": {
+								"sni": ["example.com"]
+							},
+							"certificate_selection": {
+								"any_tag": ["cert0"]
+							}
+						}
+					],
+					"automatic_https": {
+						"disable": true
+					}
+                }
+            }
+        },
+		"tls": {
+			"certificates": {
+				"load_files": [
+					{
+						"certificate": "certs/example.com.pem",
+						"key": "certs/example.com-key.pem",
+						"tags": ["cert0"]
+					}
+				]
+			},
+			"automation": {
+				"policies": [
+					{
+						"on_demand": true
+					}
+				]
+			}
+		}
+    }
+}
