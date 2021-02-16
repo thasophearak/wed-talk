@@ -10,7 +10,7 @@ cd certs && mkcert example.com
 
 Make sure to have https://github.com/caddyserver/caddy installed
 ```
-caddy start
+cd ../ && caddy start
 ```
 
 - **Step 2**: POST Caddy config
