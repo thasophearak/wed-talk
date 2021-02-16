@@ -38,6 +38,7 @@
                                                         {
                                                             "handle": [
                                                                 {
+                                                                    "@id": "circle-service",
                                                                     "handler": "reverse_proxy",
                                                                     "health_checks": {
                                                                         "active": {
@@ -47,7 +48,7 @@
                                                                     },
                                                                     "upstreams": [
                                                                         {
-                                                                            "dial": "localhost:3030"
+                                                                            "dial": ":3030"
                                                                         }
                                                                     ]
                                                                 }
@@ -81,7 +82,7 @@
                                                                     },
                                                                     "upstreams": [
                                                                         {
-                                                                            "dial": "localhost:3020"
+                                                                            "dial": ":3020"
                                                                         }
                                                                     ]
                                                                 }
@@ -115,7 +116,7 @@
                                                                     },
                                                                     "upstreams": [
                                                                         {
-                                                                            "dial": "localhost:3010"
+                                                                            "dial": ":3010"
                                                                         }
                                                                     ]
                                                                 }
